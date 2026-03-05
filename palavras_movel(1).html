@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050e1f">
+<title>Palavras · 1M</title>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; background:#050e1f; color:#f8fafc; font-family:'Nunito',sans-serif; overflow:hidden; touch-action:manipulation; }
+
+  .c0{background:#FF6B6B;color:#fff} .c1{background:#FF9F43;color:#fff}
+  .c2{background:#FFC300;color:#1a1a1a} .c3{background:#06d6a0;color:#fff}
+  .c4{background:#3a86ff;color:#fff} .c5{background:#c77dff;color:#fff}
+  .c6{background:#ff6b9d;color:#fff} .c7{background:#00b4d8;color:#fff}
+
+  .glow-0{box-shadow:0 0 40px #FF6B6B99} .glow-1{box-shadow:0 0 40px #FF9F4399}
+  .glow-2{box-shadow:0 0 40px #FFC30099} .glow-3{box-shadow:0 0 40px #06d6a099}
+  .glow-4{box-shadow:0 0 40px #3a86ff99} .glow-5{box-shadow:0 0 40px #c77dff99}
+  .glow-6{box-shadow:0 0 40px #ff6b9d99} .glow-7{box-shadow:0 0 40px #00b4d899}
+
+  #app { height:100%; display:flex; flex-direction:column; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 10px; flex-shrink:0; }
+  .badge { font-size:0.72rem; font-weight:800; color:#334155; text-transform:uppercase; letter-spacing:0.5px; }
+  .counter { font-size:0.85rem; font-weight:800; color:#94a3b8; background:#1e293b; border-radius:99px; padding:5px 16px; }
+
+  .prog-wrap { height:4px; background:#1e293b; margin:0 20px; border-radius:99px; overflow:hidden; flex-shrink:0; }
+  .prog-fill { height:100%; background:linear-gradient(90deg,#3a86ff,#06d6a0); border-radius:99px; transition:width 0.4s; }
+
+  .tap-area {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    cursor:pointer; user-select:none; -webkit-user-select:none; padding:20px;
+  }
+
+  .word-wrap { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+
+  .syl {
+    font-family:'Courier Prime', 'Courier New', monospace; font-weight:700;
+    font-size:clamp(2.8rem,16vw,5.5rem);
+    border-radius:18px; padding:10px 22px; line-height:1;
+    transition:transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+    transform-origin:center;
+  }
+  .syl.inactive { opacity:0.15; transform:scale(0.88); }
+  .syl.active   { opacity:1; transform:scale(1.12); position:relative; z-index:2; }
+  .syl.done     { opacity:0.4; transform:scale(0.93); }
+
+  .finger-wrap { margin-top:32px; display:flex; flex-direction:column; align-items:center; gap:4px; transition:opacity 0.3s; }
+  .finger-emoji { font-size:2rem; animation:fb 0.8s ease-in-out infinite; }
+  @keyframes fb { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .tap-hint { font-size:0.7rem; font-weight:800; color:#1e3a5f; text-transform:uppercase; letter-spacing:1px; animation:hp 2.5s ease-in-out infinite; }
+  @keyframes hp { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+
+  .next-hint { margin-top:32px; font-size:0.8rem; font-weight:800; color:#3a86ff; text-transform:uppercase; letter-spacing:1px; animation:hp 1.5s ease-in-out infinite; display:none; }
+  .next-hint.show { display:block; }
+
+  .controls { display:flex; align-items:center; gap:12px; padding:14px 20px 30px; flex-shrink:0; border-top:1px solid #1e293b; }
+  .btn { border:none; border-radius:14px; font-family:'Nunito',sans-serif; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; transition:transform 0.1s; }
+  .btn:active { transform:scale(0.91); }
+  .btn:disabled { opacity:0.22; pointer-events:none; }
+  .btn-nav { width:52px; height:52px; background:#1e293b; color:#64748b; font-size:1.3rem; flex-shrink:0; }
+  .btn-sound { flex:1; height:52px; background:#1d4ed8; color:white; font-size:1rem; gap:6px; box-shadow:0 4px 0 #1e3a8a; }
+  .btn-sound:active { box-shadow:0 1px 0 #1e3a8a; transform:translateY(3px) scale(0.97); }
+  .btn-sound.playing { background:#059669; box-shadow:0 4px 0 #065f46; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="badge">Turma 1M · Prof. Rui</div>
+    <div class="counter" id="counter">1 / 75</div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:1%"></div></div>
+
+  <div class="tap-area" id="tapArea">
+    <div class="word-wrap" id="wordWrap"></div>
+    <div class="finger-wrap" id="fingerWrap">
+      <div class="finger-emoji">☝️</div>
+      <div class="tap-hint">toca para avançar</div>
+    </div>
+    <div class="next-hint" id="nextHint">toca para a próxima palavra →</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-nav" id="btnPrev">←</button>
+    <button class="btn btn-sound" id="btnSound">🔊 Ouvir</button>
+    <button class="btn btn-nav" id="btnNext">→</button>
+  </div>
+</div>
+
+<script>
+const PALETTE = ['c0','c1','c2','c3','c4','c5','c6','c7'];
+
+function assignColors(n) {
+  const r = []; let last = -1;
+  for (let i = 0; i < n; i++) {
+    const a = PALETTE.map((_,j)=>j).filter(j=>j!==last);
+    const idx = a[Math.floor(Math.random()*a.length)];
+    r.push(idx); last = idx;
+  }
+  return r;
+}
+
+const PALAVRAS_RAW = [
+  // ── silabário base ──
+  "ra-to","ri-o","ru-a","ro-da","to-rre","ca-rro","pa-to","va-ca",
+  "me-lo","li-ma","ca-ma","pi-pa","lu-a","pe-ra","no-me","ve-la",
+  "co-po","ca-pa","ti-ra","vi-ra","pa-ta","la-ma","tu-do","mu-la",
+  "ne-to","da-do","mo-to","re-mo","ro-lo","re-de","ri-ma","vi-da",
+  "do-na","no-ra","va-ra","te-la","cu-ra","ti-po","ve-ra","pa-ra",
+  "mi-na","ca-ne-ta","pa-ne-la","me-ni-no","me-ni-na","ca-va-lo",
+  "pi-lo-to","to-ma-te","ca-me-lo","pa-re-de",
+  // ── ditongos ──
+  "pai","vai","cai","mau","pau",
+  "lei","rei","eu","meu","viu",
+  "riu","ca-iu","pão","cão","mão",
+  "não","vão","tão","mãe","lei-te",
+  "mei-o","tou-ro","lou-ro","cau-da","noi-te",
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+const PALAVRAS = shuffle(PALAVRAS_RAW);
+const COLORS = PALAVRAS.map(p => assignColors(p.split('-').length));
+
+let wIdx = 0;
+let sIdx = -1;
+let sylEls = [];
+
+function renderWord() {
+  const syls = PALAVRAS[wIdx].split('-');
+  const colors = COLORS[wIdx];
+  const wrap = document.getElementById('wordWrap');
+  wrap.innerHTML = ''; sylEls = [];
+
+  syls.forEach((syl, i) => {
+    const el = document.createElement('div');
+    el.className = `syl inactive ${PALETTE[colors[i]]}`;
+    el.dataset.ci = colors[i];
+    el.textContent = syl;
+    sylEls.push(el);
+    wrap.appendChild(el);
+  });
+
+  sIdx = -1;
+  document.getElementById('fingerWrap').style.opacity = '1';
+  document.getElementById('nextHint').classList.remove('show');
+  updateUI();
+}
+
+function activateSyl(idx) {
+  sIdx = idx;
+  sylEls.forEach((el, i) => {
+    el.classList.remove('inactive','active','done');
+    for (let g=0;g<8;g++) el.classList.remove('glow-'+g);
+    if (i < idx)        el.classList.add('done');
+    else if (i === idx) { el.classList.add('active'); el.classList.add('glow-'+el.dataset.ci); }
+    else                el.classList.add('inactive');
+  });
+}
+
+function advance() {
+  if (sIdx === -1) {
+    activateSyl(0);
+    return;
+  }
+  const next = sIdx + 1;
+  if (next < sylEls.length) {
+    activateSyl(next);
+    if (next === sylEls.length - 1) {
+      document.getElementById('fingerWrap').style.opacity = '0';
+      document.getElementById('nextHint').classList.add('show');
+    }
+  } else {
+    if (wIdx < PALAVRAS.length - 1) {
+      wIdx++;
+      renderWord();
+    }
+  }
+}
+
+function goWord(dir) {
+  if (dir === 1 && wIdx < PALAVRAS.length-1) wIdx++;
+  else if (dir === -1 && wIdx > 0) wIdx--;
+  renderWord();
+}
+
+function updateUI() {
+  const t = PALAVRAS.length;
+  document.getElementById('counter').textContent = `${wIdx+1} / ${t}`;
+  document.getElementById('progFill').style.width = ((wIdx+1)/t*100)+'%';
+  document.getElementById('btnPrev').disabled = wIdx === 0;
+  document.getElementById('btnNext').disabled = wIdx === t-1;
+  const b = document.getElementById('btnSound');
+  b.classList.remove('playing'); b.innerHTML = '🔊 Ouvir';
+}
+
+function speakWord() {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const txt = PALAVRAS[wIdx].replace(/-/g,'');
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = 'pt-PT'; u.rate = 0.7; u.pitch = 1.1;
+  const b = document.getElementById('btnSound');
+  b.classList.add('playing'); b.innerHTML = '🔊 A ler...';
+  u.onend = () => { b.classList.remove('playing'); b.innerHTML = '🔊 Ouvir'; };
+  window.speechSynthesis.speak(u);
+}
+
+document.getElementById('tapArea').addEventListener('click', advance);
+document.getElementById('btnSound').addEventListener('click', e => { e.stopPropagation(); speakWord(); });
+document.getElementById('btnPrev').addEventListener('click', e => { e.stopPropagation(); goWord(-1); });
+document.getElementById('btnNext').addEventListener('click', e => { e.stopPropagation(); goWord(1); });
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); advance(); }
+  if (e.key==='ArrowLeft') { e.preventDefault(); goWord(-1); }
+});
+
+renderWord();
+</script>
+</body>
+</html>
