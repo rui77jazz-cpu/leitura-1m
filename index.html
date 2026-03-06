@@ -106,7 +106,6 @@ function assignColors(n) {
 }
 
 const PALAVRAS_RAW = [
-  // ── silabário base ──
   "ra-to","ri-o","ru-a","ro-da","to-rre","ca-rro","pa-to","va-ca",
   "me-lo","li-ma","ca-ma","pi-pa","lu-a","pe-ra","no-me","ve-la",
   "co-po","ca-pa","ti-ra","vi-ra","pa-ta","la-ma","tu-do","mu-la",
@@ -114,7 +113,6 @@ const PALAVRAS_RAW = [
   "do-na","no-ra","va-ra","te-la","cu-ra","ti-po","ve-ra","pa-ra",
   "mi-na","ca-ne-ta","pa-ne-la","me-ni-no","me-ni-na","ca-va-lo",
   "pi-lo-to","to-ma-te","ca-me-lo","pa-re-de",
-  // ── ditongos ──
   "pai","vai","cai","mau","pau",
   "lei","rei","eu","meu","viu",
   "riu","ca-iu","pão","cão","mão",
@@ -211,12 +209,22 @@ function speakWord() {
   window.speechSynthesis.cancel();
   const txt = PALAVRAS[wIdx].replace(/-/g,'');
   const u = new SpeechSynthesisUtterance(txt);
+  
+  // Tenta selecionar uma voz de Portugal
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang.includes('pt-PT'));
+  if (ptVoice) u.voice = ptVoice;
+  
   u.lang = 'pt-PT'; u.rate = 0.7; u.pitch = 1.1;
+  
   const b = document.getElementById('btnSound');
   b.classList.add('playing'); b.innerHTML = '🔊 A ler...';
   u.onend = () => { b.classList.remove('playing'); b.innerHTML = '🔊 Ouvir'; };
   window.speechSynthesis.speak(u);
 }
+
+// Força o carregamento das vozes
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
 document.getElementById('tapArea').addEventListener('click', advance);
 document.getElementById('btnSound').addEventListener('click', e => { e.stopPropagation(); speakWord(); });
