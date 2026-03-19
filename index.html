@@ -48,11 +48,11 @@ body {
 .prog-wrap { height:2px; background:var(--border); margin:0 18px 8px; border-radius:99px; flex-shrink:0; }
 .prog-fill  { height:100%; background:linear-gradient(90deg,var(--blue),var(--green)); transition:width 0.4s cubic-bezier(.4,0,.2,1); border-radius:99px; }
 
-.mode-tabs { display:flex; gap:6px; padding:0 18px 8px; flex-shrink:0; }
+.mode-tabs { display:flex; gap:5px; padding:0 18px 8px; flex-shrink:0; }
 .tab-btn {
   flex:1; height:40px; border:1.5px solid var(--border); background:transparent; color:var(--dim);
-  font-family:'Nunito',sans-serif; font-weight:900; font-size:0.72rem;
-  border-radius:12px; cursor:pointer; transition:all 0.18s; text-transform:uppercase; letter-spacing:0.3px;
+  font-family:'Nunito',sans-serif; font-weight:900; font-size:0.67rem;
+  border-radius:12px; cursor:pointer; transition:all 0.18s; text-transform:uppercase; letter-spacing:0.2px;
   touch-action:manipulation;
 }
 .tab-btn.active { background:var(--blue); border-color:var(--blue); color:#fff; box-shadow:0 2px 16px #3a86ff44; }
@@ -90,6 +90,7 @@ body {
 .swipe-hint.right { right:6px; }
 .swipe-hint.show  { opacity:0.55; }
 
+/* PALAVRAS */
 .word-wrap {
   display:flex; align-items:center; justify-content:center;
   gap:10px; flex-wrap:wrap; max-width:100%;
@@ -104,6 +105,19 @@ body {
 .syl.active   { opacity:1; transform:scale(1.12); z-index:2; }
 .syl.done     { opacity:0.28; transform:scale(0.9); }
 
+/* LETRAS — cartão único grande */
+.letra-card {
+  font-family:'Courier Prime',monospace; font-weight:700;
+  font-size:clamp(5rem,28vw,10rem); border-radius:24px;
+  padding:20px 40px; line-height:1; text-align:center;
+  transition:transform 0.2s cubic-bezier(.4,0,.2,1), opacity 0.2s;
+}
+.letra-label {
+  margin-top:18px; font-size:0.65rem; font-weight:900;
+  color:var(--dim); text-transform:uppercase; letter-spacing:1.5px;
+}
+
+/* FRASES / TEXTOS */
 .texto-label {
   font-size:0.65rem; font-weight:900; color:var(--dim);
   text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; flex-shrink:0;
@@ -166,6 +180,7 @@ body {
 
   <div class="mode-tabs">
     <button class="tab-btn active" data-m="palavras" onclick="setMode('palavras')">📝 Palavras</button>
+    <button class="tab-btn" data-m="letras"  onclick="setMode('letras')">🔤 Letras</button>
     <button class="tab-btn" data-m="frases"  onclick="setMode('frases')">💬 Frases</button>
     <button class="tab-btn" data-m="textos"  onclick="setMode('textos')">📖 Textos</button>
   </div>
@@ -196,7 +211,7 @@ body {
 <script>
 // ── PALAVRAS ──────────────────────────────────────────────
 const PW = [
-  // Básico (sem F, sem S)
+  // Básico
   {r:"pa-to",d:"bas"},{r:"va-ca",d:"bas"},{r:"ca-ma",d:"bas"},{r:"pi-pa",d:"bas"},
   {r:"pe-ra",d:"bas"},{r:"no-me",d:"bas"},{r:"ve-la",d:"bas"},{r:"co-po",d:"bas"},
   {r:"tu-do",d:"bas"},{r:"ne-to",d:"bas"},{r:"da-do",d:"bas"},{r:"mo-to",d:"bas"},
@@ -204,101 +219,127 @@ const PW = [
   {r:"ca-ne-ta",d:"bas"},{r:"me-ni-na",d:"bas"},{r:"ca-va-lo",d:"bas"},
   {r:"to-ma-te",d:"bas"},{r:"pa-ne-la",d:"bas"},{r:"pi-lo-to",d:"bas"},
   {r:"ca-me-lo",d:"bas"},{r:"me-ni-no",d:"bas"},
-  // R · RR (sem F, sem S)
+  // R · RR (rr corrigido)
   {r:"ra-to",d:"r"},{r:"ri-o",d:"r"},{r:"ru-a",d:"r"},{r:"ro-da",d:"r"},
   {r:"re-mo",d:"r"},{r:"ri-ma",d:"r"},{r:"pa-ra",d:"r"},{r:"cu-ra",d:"r"},
   {r:"ca-ra",d:"r"},{r:"mo-ra",d:"r"},{r:"to-ra",d:"r"},{r:"mo-ra-da",d:"r"},
-  {r:"car-ro",d:"r"},{r:"tor-re",d:"r"},{r:"ber-ro",d:"r"},{r:"bar-ro",d:"r"},
-  {r:"tor-ra-da",d:"r"},{r:"mar-me-la-da",d:"r"},
-  // B · G (sem F, sem S — fi-go removido → bo-ga)
+  {r:"ca-rro",d:"r"},{r:"to-rre",d:"r"},{r:"be-rro",d:"r"},{r:"ba-rro",d:"r"},
+  {r:"to-rra-da",d:"r"},{r:"mar-me-la-da",d:"r"},
+  // B · G
   {r:"bo-la",d:"bg"},{r:"bo-ca",d:"bg"},{r:"bo-lo",d:"bg"},{r:"bi-co",d:"bg"},
   {r:"lo-bo",d:"bg"},{r:"tu-bo",d:"bg"},{r:"ca-bo",d:"bg"},{r:"bo-ta",d:"bg"},
   {r:"ba-la",d:"bg"},{r:"bo-né",d:"bg"},{r:"bi-be",d:"bg"},
   {r:"ga-to",d:"bg"},{r:"go-la",d:"bg"},{r:"la-go",d:"bg"},{r:"bo-ga",d:"bg"},
   {r:"ga-lo",d:"bg"},{r:"ga-ta",d:"bg"},{r:"lo-go",d:"bg"},
-  // Ditongos (sem F, sem S)
+  // Ditongos
   {r:"pão",d:"dip"},{r:"cão",d:"dip"},{r:"mão",d:"dip"},{r:"não",d:"dip"},
   {r:"mãe",d:"dip"},{r:"lei",d:"dip"},{r:"rei",d:"dip"},{r:"meu",d:"dip"},
   {r:"viu",d:"dip"},{r:"riu",d:"dip"},{r:"pai",d:"dip"},{r:"vai",d:"dip"},
   {r:"ca-iu",d:"dip"},{r:"lei-te",d:"dip"},{r:"tou-ro",d:"dip"},
   {r:"noi-te",d:"dip"},{r:"cau-da",d:"dip"},{r:"rou-pa",d:"dip"},
-  // GUE · GUI (sem F, sem S — re-gue-i-fa removida por ter F)
+  // GUE · GUI
   {r:"man-gue",d:"gu"},{r:"gue-to",d:"gu"},
   {r:"Gui-da",d:"gu"},{r:"gui-a-dor",d:"gu"},{r:"gui-a",d:"gu"},
   {r:"gui-ta",d:"gu"},{r:"gui-tar-ra",d:"gu"},
 ];
 
-// ── FRASES (sem F, sem S) ─────────────────────────────────
+// ── LETRAS + SILABÁRIO ────────────────────────────────────
+// Cada item: { r: texto a mostrar, label: legenda opcional }
+// Letras individuais primeiro, depois sílabas por consoante
+const LT = [
+  // Letras
+  {r:"a",label:"vogal"},{r:"e",label:"vogal"},{r:"i",label:"vogal"},
+  {r:"o",label:"vogal"},{r:"u",label:"vogal"},
+  {r:"m",label:"consoante"},{r:"p",label:"consoante"},{r:"t",label:"consoante"},
+  {r:"v",label:"consoante"},{r:"d",label:"consoante"},{r:"n",label:"consoante"},
+  {r:"c",label:"consoante"},{r:"l",label:"consoante"},{r:"r",label:"consoante"},
+  {r:"rr",label:"dígrafo"},{r:"b",label:"consoante"},{r:"g",label:"consoante"},
+  {r:"qu",label:"dígrafo"},{r:"gu",label:"dígrafo"},
+  // Silabário — m
+  {r:"ma",label:"m"},{r:"me",label:"m"},{r:"mi",label:"m"},{r:"mo",label:"m"},{r:"mu",label:"m"},
+  // p
+  {r:"pa",label:"p"},{r:"pe",label:"p"},{r:"pi",label:"p"},{r:"po",label:"p"},{r:"pu",label:"p"},
+  // t
+  {r:"ta",label:"t"},{r:"te",label:"t"},{r:"ti",label:"t"},{r:"to",label:"t"},{r:"tu",label:"t"},
+  // v
+  {r:"va",label:"v"},{r:"ve",label:"v"},{r:"vi",label:"v"},{r:"vo",label:"v"},{r:"vu",label:"v"},
+  // d
+  {r:"da",label:"d"},{r:"de",label:"d"},{r:"di",label:"d"},{r:"do",label:"d"},{r:"du",label:"d"},
+  // n
+  {r:"na",label:"n"},{r:"ne",label:"n"},{r:"ni",label:"n"},{r:"no",label:"n"},{r:"nu",label:"n"},
+  // c/qu
+  {r:"ca",label:"c"},{r:"co",label:"c"},{r:"cu",label:"c"},
+  {r:"que",label:"qu"},{r:"qui",label:"qu"},
+  // l
+  {r:"la",label:"l"},{r:"le",label:"l"},{r:"li",label:"l"},{r:"lo",label:"l"},{r:"lu",label:"l"},
+  // r (início)
+  {r:"ra",label:"r"},{r:"re",label:"r"},{r:"ri",label:"r"},{r:"ro",label:"r"},{r:"ru",label:"r"},
+  // rr (meio)
+  {r:"rra",label:"rr"},{r:"rre",label:"rr"},{r:"rri",label:"rr"},{r:"rro",label:"rr"},{r:"rru",label:"rr"},
+  // b
+  {r:"ba",label:"b"},{r:"be",label:"b"},{r:"bi",label:"b"},{r:"bo",label:"b"},{r:"bu",label:"b"},
+  // g/gu
+  {r:"ga",label:"g"},{r:"go",label:"g"},{r:"gu",label:"g"},
+  {r:"gue",label:"gu"},{r:"gui",label:"gu"},
+];
+
+// ── FRASES ────────────────────────────────────────────────
 const W = (t, s) => ({ t, s: s || [t.replace(/[.,!?:;]/g,'')] });
 
 const FR = [
-  // 1
   { t:"A Rita toca violino.", w:[
     W("A"),W("Rita",["Ri","ta"]),W("toca",["to","ca"]),W("violino.",["vi","o","li","no"])
   ]},
-  // 2
   { t:"O Rui tem um gato.", w:[
     W("O"),W("Rui",["Ru","i"]),W("tem"),W("um"),W("gato.",["ga","to"])
   ]},
-  // 3
   { t:"A Nora tem uma bola.", w:[
     W("A"),W("Nora",["No","ra"]),W("tem"),W("uma",["u","ma"]),W("bola.",["bo","la"])
   ]},
-  // 4
   { t:"O cão da Nora late.", w:[
     W("O"),W("cão"),W("da"),W("Nora",["No","ra"]),W("late.",["la","te"])
   ]},
-  // 5
   { t:"O Tomé tem um boné.", w:[
     W("O"),W("Tomé",["To","mé"]),W("tem"),W("um"),W("boné.",["bo","né"])
   ]},
-  // 6
   { t:"O Renato comeu uma torrada.", w:[
     W("O"),W("Renato",["Re","na","to"]),W("comeu",["co","meu"]),
-    W("uma",["u","ma"]),W("torrada.",["tor","ra","da"])
+    W("uma",["u","ma"]),W("torrada.",["to","rra","da"])
   ]},
-  // 7 — "feira" tinha F → substituído
   { t:"A Lídia vai ao lago com a mãe.", w:[
     W("A"),W("Lídia",["Lí","di","a"]),W("vai"),W("ao"),
     W("lago",["la","go"]),W("com"),W("a"),W("mãe.")
   ]},
-  // 8
   { t:"A Cátia viu uma gaivota no mar.", w:[
     W("A"),W("Cátia",["Cá","ti","a"]),W("viu"),W("uma",["u","ma"]),
     W("gaivota",["gai","vo","ta"]),W("no"),W("mar.")
   ]},
-  // 9
   { t:"O Marco tem um cubo e uma bola.", w:[
     W("O"),W("Marco",["Mar","co"]),W("tem"),W("um"),
     W("cubo",["cu","bo"]),W("e"),W("uma",["u","ma"]),W("bola.",["bo","la"])
   ]},
-  // 10
   { t:"O gato correu para o lago.", w:[
     W("O"),W("gato",["ga","to"]),W("correu",["cor","reu"]),
     W("para",["pa","ra"]),W("o"),W("lago.",["la","go"])
   ]},
-  // 11
   { t:"O Renato vai de carro para a rua.", w:[
     W("O"),W("Renato",["Re","na","to"]),W("vai"),W("de"),
-    W("carro",["car","ro"]),W("para",["pa","ra"]),W("a"),W("rua.",["ru","a"])
+    W("carro",["ca","rro"]),W("para",["pa","ra"]),W("a"),W("rua.",["ru","a"])
   ]},
-  // 12
   { t:"O cão late e corre pelo lago.", w:[
     W("O"),W("cão"),W("late",["la","te"]),W("e"),
     W("corre",["cor","re"]),W("pelo"),W("lago.",["la","go"])
   ]},
 ];
 
-// ── TEXTOS (sem F, sem S) ─────────────────────────────────
+// ── TEXTOS ────────────────────────────────────────────────
 const TX = [
-  // Texto 1 — "manso" tinha S → "bonito"
   { titulo:"O Gato", words:[
     W("O"),W("Rui",["Ru","i"]),W("tem"),W("um"),W("gato."),
     W("O"),W("gato"),W("é"),W("gordo"),W("e"),W("bonito.",["bo","ni","to"]),
     W("O"),W("gato"),W("come"),W("e"),W("dorme.",["dor","me"]),
     W("O"),W("Rui",["Ru","i"]),W("adora",["a","do","ra"]),W("o"),W("gato.",["ga","to"]),
   ]},
-  // Texto 2 — "foi" e "ficou" tinham F → reescrito
   { titulo:"No Parque", words:[
     W("De"),W("tarde,"),W("a"),W("Marta",["Mar","ta"]),W("e"),W("o"),
     W("cão"),W("vão"),W("ao"),W("parque.",["par","que"]),
@@ -306,29 +347,30 @@ const TX = [
     W("A"),W("Marta",["Mar","ta"]),W("ri"),W("muito.",["mui","to"]),
     W("O"),W("cão"),W("vem"),W("para",["pa","ra"]),W("a"),W("Marta.",["Mar","ta"]),
   ]},
-  // Texto 3 — sem F, sem S ✓
   { titulo:"O Boné do Tomé", words:[
     W("O"),W("Tomé",["To","mé"]),W("tem"),W("um"),W("boné.",["bo","né"]),
     W("O"),W("boné"),W("é"),W("bonito.",["bo","ni","to"]),
     W("O"),W("Tomé",["To","mé"]),W("adora",["a","do","ra"]),W("o"),W("boné.",["bo","né"]),
     W("A"),W("mãe"),W("deu"),W("o"),W("boné",["bo","né"]),W("ao"),W("Tomé.",["To","mé"]),
   ]},
-  // Texto 4 — "fica" tinha F → "vai no carro"
   { titulo:"O Carro do Renato", words:[
-    W("O"),W("Renato",["Re","na","to"]),W("tem"),W("um"),W("carro.",["car","ro"]),
+    W("O"),W("Renato",["Re","na","to"]),W("tem"),W("um"),W("carro.",["ca","rro"]),
     W("O"),W("carro"),W("é"),W("grande"),W("e"),W("bonito.",["bo","ni","to"]),
-    W("O"),W("Renato",["Re","na","to"]),W("vai"),W("de"),W("carro",["car","ro"]),
+    W("O"),W("Renato",["Re","na","to"]),W("vai"),W("de"),W("carro",["ca","rro"]),
     W("para",["pa","ra"]),W("a"),W("cidade.",["ci","da","de"]),
-    W("O"),W("cão"),W("vai"),W("no"),W("carro.",["car","ro"]),
+    W("O"),W("cão"),W("vai"),W("no"),W("carro.",["ca","rro"]),
   ]},
 ];
 
 // ── ESTADO ────────────────────────────────────────────────
 let mode='palavras', domain='todos', caseUp=false;
 let pList=[], pIdx=0, pSyl=-1, pCols=[];
+let lIdx=0;
 let fIdx=0, fWi=0, fSi=-1;
 let tIdx=0, tWi=0, tSi=-1;
 
+// ── CORES ─────────────────────────────────────────────────
+const LETRA_COLS = [4,3,0,5,1,6,2,7];
 function mkCols(n){
   const c=[]; let last=-1;
   for(let i=0;i<n;i++){
@@ -360,11 +402,14 @@ function buildP(){
   pCols=pList.map(p=>mkCols(p.r.split('-').length));
 }
 
+// ── MODO / DOMÍNIO / CASO ─────────────────────────────────
 function setMode(m){
   mode=m;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
-  document.getElementById('filterRow').style.display=m==='palavras'?'flex':'none';
+  const showFilter = m==='palavras';
+  document.getElementById('filterRow').style.display=showFilter?'flex':'none';
   if(m==='palavras') buildP();
+  if(m==='letras') lIdx=0;
   render();
 }
 function setDomain(el,d){
@@ -378,12 +423,15 @@ function toggleCase(){
   b.textContent=caseUp?'AA':'Aa'; b.classList.toggle('on',caseUp); render();
 }
 
+// ── TOQUE ─────────────────────────────────────────────────
 function onTap(){
   if(mode==='palavras'){
     if(!pList.length) return;
     const n=pList[pIdx].r.split('-').length;
     if(pSyl<n-1){pSyl++;}
     else if(pIdx<pList.length-1){pIdx++;pSyl=-1;}
+  } else if(mode==='letras'){
+    if(lIdx<LT.length-1) lIdx++;
   } else if(mode==='frases'){
     adv(FR[fIdx].w,fWi,fSi,(wi,si)=>{fWi=wi;fSi=si;},
       ()=>{if(fIdx<FR.length-1){fIdx++;fWi=0;fSi=-1;}});
@@ -400,19 +448,23 @@ function adv(words,wi,si,set,onEnd){
   else{onEnd();}
 }
 
+// ── NAVEGAÇÃO ─────────────────────────────────────────────
 function goPrev(){
   if(mode==='palavras'){if(pIdx>0){pIdx--;pSyl=-1;}}
+  else if(mode==='letras'){if(lIdx>0)lIdx--;}
   else if(mode==='frases'){if(fIdx>0)fIdx--;fWi=0;fSi=-1;}
   else{if(tIdx>0)tIdx--;tWi=0;tSi=-1;}
   render();
 }
 function goNext(){
   if(mode==='palavras'){if(pIdx<pList.length-1){pIdx++;pSyl=-1;}}
+  else if(mode==='letras'){if(lIdx<LT.length-1)lIdx++;}
   else if(mode==='frases'){if(fIdx<FR.length-1)fIdx++;fWi=0;fSi=-1;}
   else{if(tIdx<TX.length-1)tIdx++;tWi=0;tSi=-1;}
   render();
 }
 
+// ── SWIPE ─────────────────────────────────────────────────
 let tx0=null, ty0=null;
 document.addEventListener('touchstart',e=>{
   if(!e.target.closest('#content')) return;
@@ -433,10 +485,12 @@ function flashSwipe(dir){
   if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),260);}
 }
 
+// ── FALA ──────────────────────────────────────────────────
 function doSpeak(e){
   if(e) e.stopPropagation();
   let txt='';
   if(mode==='palavras') txt=pList[pIdx]?.r.replace(/-/g,'');
+  else if(mode==='letras') txt=LT[lIdx]?.r;
   else if(mode==='frases') txt=FR[fIdx]?.t;
   else txt=TX[tIdx]?.words.map(w=>w.t).join(' ');
   if(!txt||!window.speechSynthesis) return;
@@ -445,7 +499,7 @@ function doSpeak(e){
   const vs=window.speechSynthesis.getVoices();
   const v=vs.find(v=>v.lang.includes('pt-PT'));
   if(v) u.voice=v;
-  u.lang='pt-PT'; u.rate=0.7; u.pitch=1.05;
+  u.lang='pt-PT'; u.rate=0.65; u.pitch=1.05;
   const b=document.getElementById('btnSound');
   b.classList.add('playing'); b.textContent='🔊 A ler...';
   u.onend=()=>{b.classList.remove('playing');b.innerHTML='🔊 Ouvir';};
@@ -453,18 +507,23 @@ function doSpeak(e){
 }
 window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
+// ── RENDER ────────────────────────────────────────────────
 function render(){
   let n,total;
   if(mode==='palavras'){n=pIdx+1;total=pList.length;}
+  else if(mode==='letras'){n=lIdx+1;total=LT.length;}
   else if(mode==='frases'){n=fIdx+1;total=FR.length;}
   else{n=tIdx+1;total=TX.length;}
   document.getElementById('counter').textContent=`${n} / ${total}`;
   document.getElementById('progFill').style.width=(n/total*100)+'%';
-  const atS=mode==='palavras'?pIdx===0:mode==='frases'?fIdx===0:tIdx===0;
-  const atE=mode==='palavras'?pIdx===pList.length-1:mode==='frases'?fIdx===FR.length-1:tIdx===TX.length-1;
+
+  const atS=mode==='palavras'?pIdx===0:mode==='letras'?lIdx===0:mode==='frases'?fIdx===0:tIdx===0;
+  const atE=mode==='palavras'?pIdx===pList.length-1:mode==='letras'?lIdx===LT.length-1:mode==='frases'?fIdx===FR.length-1:tIdx===TX.length-1;
   document.getElementById('btnPrev').disabled=atS;
   document.getElementById('btnNext').disabled=atE;
+
   if(mode==='palavras') renderPalavras();
+  else if(mode==='letras') renderLetra();
   else if(mode==='frases') renderFT(FR[fIdx].w,fWi,fSi,null);
   else renderFT(TX[tIdx].words,tWi,tSi,TX[tIdx].titulo);
 }
@@ -495,6 +554,22 @@ function renderPalavras(){
     h+=`<div class="hint-wrap"><div class="hint-emoji">☝️</div><div class="hint-txt">toca para começar</div></div>`;
   } else if(pSyl===syls.length-1&&pIdx<pList.length-1){
     h+=`<div class="next-lbl">→ próxima palavra</div>`;
+  }
+  el.innerHTML=h;
+}
+
+function renderLetra(){
+  const el=document.getElementById('content');
+  const item=LT[lIdx];
+  const ci=LETRA_COLS[lIdx % LETRA_COLS.length];
+  const txt=caseUp?item.r.toUpperCase():item.r;
+  let h='<div class="swipe-hint left" id="shL">‹</div><div class="swipe-hint right" id="shR">›</div>';
+  h+=`<div class="letra-card c${ci} glow-${ci}">${txt}</div>`;
+  if(item.label) h+=`<div class="letra-label">${item.label}</div>`;
+  if(lIdx<LT.length-1){
+    h+=`<div class="next-lbl" style="margin-top:24px">→ próximo</div>`;
+  } else {
+    h+=`<div class="next-lbl" style="color:var(--green);animation:none;margin-top:24px">✓ Muito bem!</div>`;
   }
   el.innerHTML=h;
 }
@@ -533,6 +608,7 @@ function renderFT(words,wi,si,titulo){
   el.innerHTML=h;
 }
 
+// ── ARRANQUE ──────────────────────────────────────────────
 buildP();
 render();
 document.addEventListener('keydown',e=>{
